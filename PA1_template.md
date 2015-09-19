@@ -2,9 +2,11 @@
 title: "Personal Activity Monitoring Device Patterns Assesment"
 author: "Abiyu Giday"
 date: "September 18, 2015"
-output: 
-         html_document:
-             toc: true
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    toc: yes
 ---
 
 # Overview
