@@ -22,13 +22,13 @@ output:
    + Calculate and report the total number of missing values in the dataset
    + Impute missing values in the dataset
    + Create a new dataset that is equal to the original dataset but with the missing data filled in.
-   + Make a histogram of the total number of steps taken each day and Calculate and report the + mean and median total number of steps taken per day.
+   + Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total    number of steps taken per day.
 6. Q-5 Are there differences in activity patterns between weekdays and weekends?
    + Preparing the data table for weekday/weekend activty pattern comparison
    + Create a new factor variable with two levels – “weekday” and “weekend”
    + Make a time series plot the average number of steps taken, averaged across all weekday days or weekend days
-7. What are the weekly Distribution of steps taken for the two months?
-   + Daily steps bar chart
+7. Q-6 What are the weekly Distribution of steps taken for the two months?
+   + Figure 5: Daily steps bar chart
 8. Over all observation
 
 # Overview
@@ -342,19 +342,6 @@ head(actvty333)
 ## 6 2012-10-06 15420
 ```
 
-### Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day.
-#### Prepare the data table for comarative histogram plot
-``{r, echo=TRUE}
-#change variable data types 
-actvty333$date <- as.Date(actvty333$date)
-actvty333$interval <- as.numeric(actvty333$interval)
-actvty333$steps <- as.numeric(actvty333$steps)
-actvty333sum <- actvty333 %>%
-                  group_by(date) %>% 
-                     summarise_each(funs(sum), steps) # sum of  steps each day
-
-
-
 #### What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
 ```r
@@ -365,17 +352,18 @@ The imputed data with locf technique added 5.7947 &times; 10<sup>4</sup> additio
 
 ##### Side by side summary comparison shows in this table
 
-
-     Summary  |  Msng NA  | Imputed NA|
-     -------- | ----------|-----------| 
-     Min      |   41      |    41     |   
-     Median   |   10760   |    10570  |
-     Mean     |   10770   |    10300  |
-     Max      |   21990   |    21990  |
-     Total    |   570608  |    628555 |
+    | Summary  |  Msng NA   | Imputed NA |
+    | -------- | ---------- | ---------- | 
+    | Min      |   41       |    41      |   
+    | Median   |   10760    |    10570   |
+    | Mean     |   10770    |    10300   |
+    | Max      |   21990    |    21990   |
+    | Total    |   570608   |    628555  |
 
      
 The imputed data with locf technique added 5.7947 &times; 10<sup>4</sup> many more steps. Which is 10.155308 % more. That is statstically significant could introduce bias in the analysis. 
+
+### Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day.
      
 #### Figure 3: Side by side comparison of total steps with missing and imputed data.
 

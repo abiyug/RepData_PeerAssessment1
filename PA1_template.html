@@ -498,7 +498,7 @@ hr {
 <li>Calculate and report the total number of missing values in the dataset</li>
 <li>Impute missing values in the dataset</li>
 <li>Create a new dataset that is equal to the original dataset but with the missing data filled in.</li>
-<li>Make a histogram of the total number of steps taken each day and Calculate and report the + mean and median total number of steps taken per day.</li>
+<li>Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total    number of steps taken per day.</li>
 </ul></li>
 <li>Q-5 Are there differences in activity patterns between weekdays and weekends?
 
@@ -507,10 +507,10 @@ hr {
 <li>Create a new factor variable with two levels – “weekday” and “weekend”</li>
 <li>Make a time series plot the average number of steps taken, averaged across all weekday days or weekend days</li>
 </ul></li>
-<li>What are the weekly Distribution of steps taken for the two months?
+<li>Q-6 What are the weekly Distribution of steps taken for the two months?
 
 <ul>
-<li>Daily steps bar chart</li>
+<li>Figure 5: Daily steps bar chart</li>
 </ul></li>
 <li>Over all observation</li>
 </ol>
@@ -791,19 +791,6 @@ str(actvty333)
 ## 6 2012-10-06 15420
 </code></pre>
 
-<h3>Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day.</h3>
-
-<h4>Prepare the data table for comarative histogram plot</h4>
-
-<p>&ldquo;{r, echo=TRUE}
-#change variable data types 
-actvty333$date &lt;- as.Date(actvty333$date)
-actvty333$interval &lt;- as.numeric(actvty333$interval)
-actvty333$steps &lt;- as.numeric(actvty333$steps)
-actvty333sum &lt;- actvty333 %&gt;%
-                  group_by(date) %&gt;% 
-                     summarise_each(funs(sum), steps) # sum of  steps each day</p>
-
 <h4>What is the impact of imputing missing data on the estimates of the total daily number of steps?</h4>
 
 <pre><code class="r">AddSteps = sum(actvty333$steps) - sum(actvty3$steps, na.rm = TRUE)
@@ -814,41 +801,18 @@ T =  AddSteps / sum(actvty3$steps, na.rm = TRUE) * 100
 
 <h5>Side by side summary comparison shows in this table</h5>
 
-<table><thead>
-<tr>
-<th>Summary</th>
-<th>Msng NA</th>
-<th>Imputed NA</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>Min</td>
-<td>41</td>
-<td>41</td>
-</tr>
-<tr>
-<td>Median</td>
-<td>10760</td>
-<td>10570</td>
-</tr>
-<tr>
-<td>Mean</td>
-<td>10770</td>
-<td>10300</td>
-</tr>
-<tr>
-<td>Max</td>
-<td>21990</td>
-<td>21990</td>
-</tr>
-<tr>
-<td>Total</td>
-<td>570608</td>
-<td>628555</td>
-</tr>
-</tbody></table>
+<pre><code>| Summary  |  Msng NA   | Imputed NA |
+| -------- | ---------- | ---------- | 
+| Min      |   41       |    41      |   
+| Median   |   10760    |    10570   |
+| Mean     |   10770    |    10300   |
+| Max      |   21990    |    21990   |
+| Total    |   570608   |    628555  |
+</code></pre>
 
 <p>The imputed data with locf technique added 5.7947 &times; 10<sup>4</sup> many more steps. Which is 10.155308 % more. That is statstically significant could introduce bias in the analysis. </p>
+
+<h3>Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day.</h3>
 
 <h4>Figure 3: Side by side comparison of total steps with missing and imputed data.</h4>
 
