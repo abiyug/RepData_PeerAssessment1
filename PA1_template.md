@@ -2,17 +2,39 @@
 title: "Personal Activity Monitoring Device Patterns Assesment"
 author: "Abiyu Giday"
 date: "September 18, 2015"
-output:
-  pdf_document:
-    toc: yes
-  html_document:
-    toc: yes
+output: 
+         html_document:
+             toc: true
 ---
+
+#### _Table of Content_
+1. Overview
+2. Q-1 Loading and preprocessing the data
+   + Process/transform the data (if necessary) into a format suitable for your analysis
+3. Q-2 What is mean total number of steps taken per day?
+   + Calculate the total number of steps taken per day
+   + Make a histogram of the total number of steps taken each day
+   + Calculate and report the mean and median of the total number of steps taken per day
+4. Q-3 What is the average daily activity pattern?
+   + Make a time series plot on the average number of steps taken
+   + Which 5-minute interval contains the maximum number of steps?
+5. Q-4 Imputing missing values
+   + Calculate and report the total number of missing values in the dataset
+   + Impute missing values in the dataset
+   + Create a new dataset that is equal to the original dataset but with the missing data filled in.
+   + Make a histogram of the total number of steps taken each day and Calculate and report the + mean and median total number of steps taken per day.
+6. Q-5 Are there differences in activity patterns between weekdays and weekends?
+   + Preparing the data table for weekday/weekend activty pattern comparison
+   + Create a new factor variable with two levels – “weekday” and “weekend”
+   + Make a time series plot the average number of steps taken, averaged across all weekday days or weekend days
+7. What are the weekly Distribution of steps taken for the two months?
+   + Daily steps bar chart
+8. Over all observation
 
 # Overview
 <img src="http://www.ericselectronics.com/wp-content/uploads/2015/06/HAMSWAN-Smart-Wrist-Watch-Bluetooth-40-Fitness-Tracker-Health-Smartwatch-with-Heart-Rate-Monitor-Phone-Watches-NFC-Function-for-IOS-Android-Iphone-Samsung-HTC-Smartphones-White-0.jpg" align="right" width="35%" height="35%" />
 This analysis makes use of data from a personal activity monitoring device, such as a Fitbit, Nike Fuelband, or Jawbone Up. These type of devices are part of the “quantified self” movement – a group of enthusiasts who take   measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. But these data remain under-utilized both because the raw data are hard to obtain and there 
-is a lack of statistical methods and software for processing and interpreting the data. This script Calculate the total number of steps taken per day, calculate and report the mean and median of the total number of steps, plots histogram of the total number of steps, shows average daily activity pattern,  method that impute missing values from the data and Make a panel plot containing a time series plots. 
+is a lack of statistical methods and software for processing and interpreting the data. This script Calculate the total number of steps taken per day, calculate and report the mean and median of the total number of steps, plots histogram of the total number of steps, shows average daily activity pattern,  method that impute missing values from the data, and Make a panel plot containing a time series plots. 
 
 ## Q-1 Loading and preprocessing the data
 
@@ -206,10 +228,6 @@ actvty3 <- read.csv("activity.csv")                #data frame in active directo
 actvty3 <- actvty3 %>%
              group_by(date) %>% 
                 summarise_each(funs(sum), steps)   # sum of  steps each day
-
-actvty3 <- actvty3 %>%
-        group_by(date) %>% 
-        summarise_each(funs(sum), steps)           # sum of  steps each day
 ```
 ### Calculate and report the total number of missing values in the dataset
 
@@ -222,27 +240,42 @@ sum(is.na(actvty3)) # how many days of misseang value
 ```
 
 ```r
-mean(is.na(actvty3)) 
+mean(is.na(actvty3)) # 4.4% NA
 ```
 
 ```
 ## [1] 0.06557377
 ```
 #### Does the presence of missing days introduce bias?
-The following plot shows that t.....
-> sum(is.na(actvty3))
-[1] 8
-> mean(is.na(actvty3))
-[1] 0.06557377
-> 
+In order to answer the imapct of bias after imputing data, the following steps in the _zoo_ package na.locf techinque is utlized as follows.
 
 ### Impute missing values in the dataset
 
 ```r
 library(zoo)
-actvty3 <- read.csv("activity.csv")  
+
+actvty3 <- actvty3 %>%
+             group_by(date) %>% 
+                summarise_each(funs(sum), steps)   # sum of  steps each day
+
+# change the var type back to Date/numeric
+actvty3$steps <- as.numeric(actvty3$steps)
+actvty3$date <- as.Date(actvty3$date)
+summary(actvty3$steps)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+##      41    8841   10760   10770   13290   21190       8
+```
+
+```r
 actvty33 <- na.locf(actvty3, na.rm = FALSE) #replace NA with the Last Value from the top down
 actvty333 <- na.locf(actvty33, na.rm = FALSE, fromLast = TRUE) # NA replace from the last data point to complete the cricle
+
+# change the var type back to Date/numeric
+actvty333$steps <- as.numeric(actvty333$steps)
+actvty333$date <- as.Date(actvty333$date)
 ```
 #### Confirming Imputed value remove all NA
 
@@ -255,11 +288,21 @@ sum(is.na(actvty333)) # how many days of misseang value
 ```
 
 ```r
-mean(is.na(actvty333)) 
+mean(is.na(actvty333))
 ```
 
 ```
 ## [1] 0
+```
+
+```r
+ImpTotlSteps <- actvty3$steps
+summary(ImpTotlSteps)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+##      41    8841   10760   10770   13290   21190       8
 ```
 ### Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
@@ -269,10 +312,9 @@ str(actvty333)
 ```
 
 ```
-## Classes 'tbl_df', 'tbl' and 'data.frame':	17568 obs. of  3 variables:
-##  $ steps   : chr  "  0" "  0" "  0" "  0" ...
-##  $ date    : chr  "2012-10-01" "2012-10-01" "2012-10-01" "2012-10-01" ...
-##  $ interval: chr  "   0" "   5" "  10" "  15" ...
+## Classes 'tbl_df', 'tbl' and 'data.frame':	61 obs. of  2 variables:
+##  $ date : Date, format: "2012-10-01" "2012-10-02" ...
+##  $ steps: num  126 126 11352 12116 13294 ...
 ```
 
 ```r
@@ -283,20 +325,58 @@ sum(is.na(actvty333))
 ## [1] 0
 ```
 
+```r
+head(actvty333)
+```
+
+```
+## Source: local data frame [6 x 2]
+## 
+##         date steps
+##       (date) (dbl)
+## 1 2012-10-01   126
+## 2 2012-10-02   126
+## 3 2012-10-03 11352
+## 4 2012-10-04 12116
+## 5 2012-10-05 13294
+## 6 2012-10-06 15420
+```
+
 ### Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day.
 #### Prepare the data table for comarative histogram plot
-
-```r
+``{r, echo=TRUE}
 #change variable data types 
 actvty333$date <- as.Date(actvty333$date)
 actvty333$interval <- as.numeric(actvty333$interval)
 actvty333$steps <- as.numeric(actvty333$steps)
-
 actvty333sum <- actvty333 %>%
                   group_by(date) %>% 
                      summarise_each(funs(sum), steps) # sum of  steps each day
-```
 
+
+
+#### What is the impact of imputing missing data on the estimates of the total daily number of steps?
+
+```r
+AddSteps = sum(actvty333$steps) - sum(actvty3$steps, na.rm = TRUE)
+T =  AddSteps / sum(actvty3$steps, na.rm = TRUE) * 100
+```
+The imputed data with locf technique added 5.7947 &times; 10<sup>4</sup> additional steps.Which is 10.155308 % more, and this could add a slight bias in the analysis. 
+
+##### Side by side summary comparison shows in this table
+
+
+     Summary  |  Msng NA  | Imputed NA|
+     -------- | ----------|-----------| 
+     Min      |   41      |    41     |   
+     Median   |   10760   |    10570  |
+     Mean     |   10770   |    10300  |
+     Max      |   21990   |    21990  |
+     Total    |   570608  |    628555 |
+
+     
+The imputed data with locf technique added 5.7947 &times; 10<sup>4</sup> many more steps. Which is 10.155308 % more. That is statstically significant could introduce bias in the analysis. 
+     
 #### Figure 3: Side by side comparison of total steps with missing and imputed data.
 
 ```r
@@ -308,11 +388,11 @@ actvtyHist <- hist(actvty1$steps,  breaks = 15, freq = T, col = "yellow",
                    rug(actvty1$steps)
                    abline(v = mean(actvty1$steps), col = "red", lwd = 4)
 
-actvtyHist3 <- hist(actvty333sum$steps,  breaks = 15, freq = T, col = "Green", 
+actvtyHist3 <- hist(actvty333$steps,  breaks = 15, freq = T, col = "Green", 
                     main = "Total steps with missing data imputed",
                     xlab = "Daily step count", ylab ="Frequency")
-                    rug(actvty333sum$steps)
-                    abline(v = mean(actvty333sum$steps), col = "red", lwd = 4)
+                    rug(actvty333$steps)
+                    abline(v = mean(actvty333$steps), col = "red", lwd = 4)
 ```
 
 ![plot of chunk Fig-3compareNAvsimputed](figure/Fig-3compareNAvsimputed-1.png) 
@@ -323,14 +403,14 @@ actvtyHist3 <- hist(actvty333sum$steps,  breaks = 15, freq = T, col = "Green",
 ### Preparing the data table for weekday/weekend activty pattern comparison
 
 ```r
-actvtyWK <- actvty333sum  %>% mutate( DaysOfWk = weekdays(as.Date(date))) # Add coresponding weekday
+actvtyWK <- actvty333  %>% mutate( DaysOfWk = weekdays(as.Date(date))) # Add coresponding weekday
 str(actvtyWK)
 ```
 
 ```
 ## Classes 'tbl_df', 'tbl' and 'data.frame':	61 obs. of  3 variables:
 ##  $ date    : Date, format: "2012-10-01" "2012-10-02" ...
-##  $ steps   : num  0 126 11352 12116 13294 ...
+##  $ steps   : num  126 126 11352 12116 13294 ...
 ##  $ DaysOfWk: chr  "Monday" "Tuesday" "Wednesday" "Thursday" ...
 ```
 
@@ -343,14 +423,14 @@ head(actvtyWK, 10)
 ## 
 ##          date steps  DaysOfWk
 ##        (date) (dbl)     (chr)
-## 1  2012-10-01     0    Monday
+## 1  2012-10-01   126    Monday
 ## 2  2012-10-02   126   Tuesday
 ## 3  2012-10-03 11352 Wednesday
 ## 4  2012-10-04 12116  Thursday
 ## 5  2012-10-05 13294    Friday
 ## 6  2012-10-06 15420  Saturday
 ## 7  2012-10-07 11015    Sunday
-## 8  2012-10-08     0    Monday
+## 8  2012-10-08 11015    Monday
 ## 9  2012-10-09 12811   Tuesday
 ## 10 2012-10-10  9900 Wednesday
 ```
@@ -402,13 +482,8 @@ head(actvtyWKD2, 10)
 ## 10 2012-10-10  9900 Wednesday   weekday
 ```
 
-#### What is the impact of imputing missing data on the estimates of the total daily number of steps?
+###
 
-```r
-AddSteps = sum(actvtyWKD2$steps) - sum(actvty1$steps)
-T =  AddSteps / sum(actvty1$steps) * 100
-```
-The imputed data with locf technique added 5.7947 &times; 10<sup>4</sup> additional steps.Which is 10.155308 % more, and this could add a slight bias in the analysis.  
 
 ### Make a time series plot the average number of steps taken, averaged across all weekday days or weekend days
 #### Figure 4: Weekdays Vs Weekend time series plot 
@@ -422,13 +497,66 @@ qplot(steps, date, data = actvtyWKD2, geom = c("line", "smooth"), method ="lm",f
 
 ![plot of chunk Fig-4weekdayVSweekend](figure/Fig-4weekdayVSweekend-1.png) 
 
-# Over all observation
+## Q-6 What are the weekly Distribution of steps taken for the two months?
 
--  The volunteer on this observation has a more even distribution of steps taken thru out the week. The individual walk less on the beggining of the week increasing walking activity towards the end of the week.  
--  For the observed data, the weekend to week day walking activity comparison show about the same level.
+```r
+actvtyWKD2
+```
+
+```
+## Source: local data frame [61 x 4]
+## 
+##          date steps  DaysOfWk TypeOfDay
+##        (date) (dbl)    (fctr)    (fctr)
+## 1  2012-10-01   126    Monday   weekday
+## 2  2012-10-02   126   Tuesday   weekday
+## 3  2012-10-03 11352 Wednesday   weekday
+## 4  2012-10-04 12116  Thursday   weekday
+## 5  2012-10-05 13294    Friday   weekday
+## 6  2012-10-06 15420  Saturday   weekend
+## 7  2012-10-07 11015    Sunday   weekend
+## 8  2012-10-08 11015    Monday   weekday
+## 9  2012-10-09 12811   Tuesday   weekday
+## 10 2012-10-10  9900 Wednesday   weekday
+## ..        ...   ...       ...       ...
+```
+
+```r
+actvtyPerDay <- actvtyWKD2 %>%
+                  group_by(DaysOfWk) %>% 
+                     summarise_each(funs(sum), steps) # sum of  steps each day
+Dailyactv <- arrange(actvtyPerDay, desc(steps))
+Dailyactv
+```
+
+```
+## Source: local data frame [7 x 2]
+## 
+##    DaysOfWk  steps
+##      (fctr)  (dbl)
+## 1 Wednesday 101662
+## 2    Friday  96784
+## 3    Sunday  96515
+## 4  Saturday  90967
+## 5  Thursday  81116
+## 6    Monday  80965
+## 7   Tuesday  80546
+```
+### Figure 5: Daily steps bar chart
+
+```r
+ggplot(Dailyactv, aes(x = factor(DaysOfWk), y = steps, color = DaysOfWk)) + geom_bar(stat = "identity") + ggtitle("Steps per day distribution") + xlab("Days of the week") 
+```
+
+![plot of chunk Fig-5dailyActvty](figure/Fig-5dailyActvty-1.png) 
+
+# Over all observation
+-  For the observed activty data, the steps tend to increase from Monday to Friday. On Weekend About the same number of steps taken on saturday and sunday.
 - The imputed data with locf technique added 5.7947 &times; 10<sup>4</sup> additional steps. Which is 10.155308 % more. This could add a slight bias in the analysis, however the model factors in somemarigin of error.  
 -  November 27, the 615th interval contains the maximum number of steps.
 - The total number steps take not including the missing data is 570608.
+The subject the activty monitor data analyzed walked less at the beggining of the week, increasing  activity towards the end of the week.  
+- The most steps are taken on Wednesdays, with 26% more steps compare to least active day Tuesdays.
 
 
 
