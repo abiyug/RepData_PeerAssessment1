@@ -240,14 +240,14 @@ sum(is.na(actvty3)) # how many days of misseang value
 ```
 
 ```r
-mean(is.na(actvty3)) # 4.4% NA
+mean(is.na(actvty3)) 
 ```
 
 ```
 ## [1] 0.06557377
 ```
-#### Does the presence of missing days introduce bias?
-In order to answer the imapct of bias after imputing data, the following steps in the _zoo_ package na.locf techinque is utlized as follows.
+#### Does the presence of missing days introduced a bias?
+In order to answer the imapct of bias after imputing data, the following steps in the _zoo_ package na.locf techinque is utlized.
 
 ### Impute missing values in the dataset
 
@@ -538,7 +538,7 @@ ggplot(Dailyactv, aes(x = factor(DaysOfWk), y = steps, color = DaysOfWk)) + geom
 
 ![plot of chunk Fig-5dailyActvty](figure/Fig-5dailyActvty-1.png) 
 
-# Over all observation
+# Overall observation
 -  For the observed activty data, the steps tend to increase from Monday to Friday. On Weekend About the same number of steps taken on saturday and sunday.
 - The imputed data with locf technique added 5.7947 &times; 10<sup>4</sup> additional steps. Which is 10.155308 % more. This could add a slight bias in the analysis, however the model factors in somemarigin of error.  
 -  November 27, the 615th interval contains the maximum number of steps.
