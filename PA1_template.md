@@ -219,7 +219,7 @@ qplot(steps, date, data = actvty2sum, geom = c("line", "smooth"), method ="lm") 
 ```
 
 ##Q-4 Imputing missing values
-To impute value for missing data a numberof model/techhniques. For this excersie we are using the **Last value carried forward _(LOCF)_** technique.  The last observed value is used to fill in missing values in subsequent observations, this method assums that the most recent observation is the best guess for subsequent missing values. We are using the R **_ZOO_** package's **na.locf** function.
+To impute value for missing data a numberof model/techhniques are available to choose from. For this excersie we are using the **Last value carried forward _(LOCF)_** technique.  The last observed value is used to fill in missing values in subsequent observations, this method assums that the most recent observation is the best guess for subsequent missing values. We are using the R **_ZOO_** package's **na.locf** function.
 ### Prepare the data 
 
 ```r
